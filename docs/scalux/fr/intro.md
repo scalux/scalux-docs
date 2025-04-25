@@ -51,7 +51,7 @@ Cette séparation nette des responsabilités garantit une meilleure maintenabili
 
 Découvrez comment `scalux` peut transformer votre façon de concevoir des applications React-Redux.
 
-- [Démarrage rapide : construisez votre premier compteur en quelques lignes](./bases.md)
+- [Démarrage rapide : construisez votre premier compteur en quelques lignes](./basics.md)
 - [Gestion avancée de l'état : historique et slicing](./modelization.md)
 - [Logique complexe simplifiée grâce aux machines à états](./machines.md)
 - [Connectez simplement vos composants à vos données](./mapData.md)
