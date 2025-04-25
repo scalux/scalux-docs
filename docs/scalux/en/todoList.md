@@ -1,5 +1,7 @@
 # Complete Example: Todo‑List Application
 
+A live example of the code below is available [here](https://stackblitz.com/edit/vitejs-vite-jxhu6bnj?file=src%2Fmain.tsx).
+
 This example walks through building a fully‑featured Todo‑list app with **scalux**, showcasing:
 
 - Fetching data from an (emulated) API
@@ -161,7 +163,7 @@ export const TodoListComponentDisplay: React.FC<TodoListComponentProps> = ({
 
   return (
     <div style={{ padding: "0 2.5em" }}>
-      <h1>My scalux Todo List</h1>
+      <h1>My Scalux Todo List</h1>
 
       {/* Undo / Redo buttons */}
       <div>
@@ -368,7 +370,7 @@ export { reducer };
 
 ```typescript
 // src/store.ts
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from "scalux";
 import { reducer } from "./state";
 
 export const store = configureStore({ reducer });
@@ -387,7 +389,6 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "scalux"; // React‑Redux provider
 import { store } from "./store";
 import { ConnectedTodoList } from "./state";
-import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

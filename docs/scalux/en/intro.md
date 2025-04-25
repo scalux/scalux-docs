@@ -55,5 +55,6 @@ Discover how `scalux` can transform the way you build React‑Redux apps.
 - [Advanced state management: history and slicing](./modelization.md)
 - [Simplify complex logic with state machines](./machines.md)
 - [Easily wire your components to your data](./mapData.md)
+- [Live example : My Scalux Todo List](https://stackblitz.com/edit/vitejs-vite-jxhu6bnj?file=src%2Fmain.tsx).
 
 Welcome to a modern, clear and efficient development experience with `scalux`. 🚀
