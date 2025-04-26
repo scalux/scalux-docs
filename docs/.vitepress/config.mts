@@ -5,6 +5,7 @@ export default defineConfig({
   title: "Scalux",
   description: "Scalux technical docs",
   base: "/scalux-docs/",
+  head: [["link", { rel: "icon", href: "/favicon.ico" }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     // nav: [
