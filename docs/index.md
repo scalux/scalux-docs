@@ -6,7 +6,7 @@ hero:
   actions:
     - theme: brand
       text: "Get Started"
-      link: /scalux/en/intro
+      link: /en/intro
     - theme: outline
       text: "GitHub"
       link: https://github.com/scalux/scalux
