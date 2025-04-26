@@ -1,0 +1,1 @@
+import{_ as n,c as a,o as e,ae as o}from"./chunks/framework.iBmvQ__U.js";const d=JSON.parse('{"title":"Basics","description":"","frontmatter":{},"headers":[],"relativePath":"en/basics.md","filePath":"en/basics.md"}'),t={name:"en/basics.md"};function l(p,s,r,c,i,D){return e(),a("div",null,s[0]||(s[0]=[o("",34)]))}const C=n(t,[["render",l]]);export{d as __pageData,C as default};
