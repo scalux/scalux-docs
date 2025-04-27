@@ -1,6 +1,6 @@
 # Complete Example: Todo‑List Application
 
-A live example of the code below is available [here](https://stackblitz.com/edit/vitejs-vite-jxhu6bnj?file=src%2Fmain.tsx).
+A live example of the code below is available [here](https://stackblitz.com/~/github.com/scalux/scalux-basic-todo?file=src/state.ts).
 
 This example walks through building a fully‑featured Todo‑list app with **scalux**, showcasing:
 
