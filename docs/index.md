@@ -29,6 +29,21 @@ Install with npm or yarn:
 npm install scalux
 ```
 
+or use the official template :
+
+```bash
+npx degit scalux/scalux-vite-template my-app
+cd my-app
+npm install # or pnpm / yarn
+npm run dev
+```
+
+This template provides a ready-to-use Vite + React + Scalux setup with TypeScript, ESLint and Prettier.
+
+## Try it instantly on Stackblitz!
+
+[The official template with the sample app](https://stackblitz.com/~/github.com/scalux/scalux-vite-template)
+
 ## Quick Counter Example
 
 Create a fully functional counter application in just a few lines:

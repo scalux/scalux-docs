@@ -1,26 +1,30 @@
 # Assets: `Labels` and `Icons`
 
-This section introduces two utilities provided by **`scalux`** that make it easy to centrally manage multilingual text content (wording) and icons adapted to different themes. These tools integrate seamlessly with your state logic and guarantee a consistent user experience.
+This section introduces two utilities provided by **`scalux`** that make it easy to centrally manage multilingual text content (labels) and icons adapted to different themes. These tools integrate seamlessly with your state logic and guarantee a consistent user experience.
 
 ## Labels
 
-The `Labels` utility lets you define and use labels according to the language currently active in the application.
+The `Labels` utility lets you define and use labels according to the language currently active in the application, either through connected React components, reactive hooks, or direct string access.
 
 With **`Labels`**, you can:
 
 - Centralise textual labels.
 - Easily handle several languages.
 - Guarantee a consistent interface when a language is undefined (by falling back to the default language).
+- Seamlessly integrate labels into React components (`connectLabels`, `useLabel`).
+- Retrieve label strings directly when needed (`getLabel`).
 
 ### Syntax and configuration
 
 ```tsx
 import { State } from "scalux";
 import { LabelComponentProps } from "scalux/helpers";
+import React from "react";
 
 const { Labels } = State({ language: "fr" });
 
-const { connectLabels } = Labels({
+// Labels configuration
+const { connectLabels, mkUseLabel, getLabel } = Labels({
   options: ["fr", "en"], // Supported languages
   fallBack: "en", // Default language
   items: {
@@ -30,47 +34,94 @@ const { connectLabels } = Labels({
     },
     Edit: "Edit",
     Design: "Design",
+    SearchPlaceholder: {
+      fr: "Rechercher...",
+      en: "Search...",
+    },
   },
 });
 
+// --- Example with connectLabels ---
 const Title = ({ text }: LabelComponentProps) => <h1>{text}</h1>;
 
-const AppTitle: React.FC<{ item: "Tool" | "Edit" }> = connectLabels({
-  language: (state) => state.language,
+const AppTitle = connectLabels({
+  language: (state) => state.language, // Language selector
   render: Title,
 });
 
 const Titles = () => (
   <div>
-    <AppTitle item="Tool" /> // <h1>Outil</h1>
-    <AppTitle item="Edit" /> // <h1>Edit</h1>
+    <AppTitle item="Tool" /> {/* <h1>Outil</h1> (if language="fr") */}
+    <AppTitle item="Edit" /> {/* <h1>Edit</h1> */}
   </div>
 );
+
+// --- Example with useLabel ---
+const useLabel = mkUseLabel((state) => state.language); // Create the hook with the selector
+
+const MyInputComponent = () => {
+  const placeholder = useLabel("SearchPlaceholder"); // Hook to get reactive text
+  const tooltip = useLabel("Tool");
+
+  return (
+    <input
+      type="text"
+      placeholder={placeholder} // Use as a prop
+      title={tooltip} // Use as a prop
+    />
+  );
+  // If state.language changes from "fr" to "en",
+  // placeholder will become "Search..." and tooltip will become "Tool" automatically.
+};
+
+// --- Example with getLabel ---
+const logLabels = () => {
+  const toolLabelDefault = getLabel("Tool"); // Uses fallback language ("en") -> "Tool"
+  const toolLabelFrench = getLabel("Tool", "fr"); // Forces French -> "Outil"
+  const editLabel = getLabel("Edit"); // Static label -> "Edit"
+
+  console.log(toolLabelDefault, toolLabelFrench, editLabel);
+};
 ```
 
 ### Code walkthrough
 
-The `Labels` constructor (returned by `State`) receives a configuration object containing:
+The `Labels` function (returned by `State`) receives a configuration object containing:
 
 - **options** – the tuple of supported languages.
 - **fallback** – the default language (must be one of `options`).
-- **items** – a dictionary where each key maps to either
+- **items** – an object where each key maps to either:
   - a static string (used for all languages), or
   - an object that assigns a specific label for each language.
 
-`Labels` returns **`connectLabels`**, which expects:
+`Labels` returns an object containing `connectLabels`, `mkUseLabel`, and `getLabel`:
 
-- **language** – a selector function that returns the active language from the state.
-- **render** – a `React.FC<LabelComponentProps>` where  
-  `type LabelComponentProps = { text: string }`.
+1.  **`connectLabels`**: A Higher-Order Component (HOC) connector that expects:
+
+    - **language** – a selector function that returns the active language from the state.
+    - **render** – a `React.FC<LabelComponentProps>` where `type LabelComponentProps = { text: string }`. It injects the correct label as the `text` prop.
+
+2.  **`mkUseLabel`**: A factory function that creates a React hook.
+
+    - It expects the **same `language` selector** as `connectLabels`.
+    - It returns the **`useLabel`** hook. This hook takes an `item` key as an argument (`useLabel("itemKey")`) and returns the corresponding label string. The hook is **reactive**: if the language changes in the state, the component using the hook will re-render with the new label. Ideal for props like `placeholder`, `aria-label`, `title`, etc.
+
+3.  **`getLabel`**: A simple function for direct access.
+    - Syntax: `getLabel(item: keyof items, language?: string): string`.
+    - It takes the item key and optionally a language.
+    - If `language` is provided and valid, it returns the label for that language.
+    - If `language` is omitted or invalid, it uses the language defined in `fallback`.
+    - This function is **not reactive** to state changes and can be used outside of React or when reactivity is not needed.
 
 ### Behaviour and edge-case handling
 
-- **Language selection**  
-  The selector `(state: RootState) => string` determines the active language. If the returned language is not listed in `options`, wording automatically falls back to the language defined in `fallback`, ensuring the UI always displays a valid label.
+- **Language selection**
 
-- **Extensibility**  
-  To add a new language, simply add its key to `options` and define labels for every item in `items`.
+  - For `connectLabels` and `useLabel` (via `mkUseLabel`), the selector `(state: RootState) => string` determines the active language. If the returned language is not listed in `options`, the text automatically falls back to the language defined in `fallback`, ensuring the UI always displays a valid label and reacts to state changes.
+  - For `getLabel`, if the `language` argument is not provided or is not in `options`, the `fallback` language is used.
+
+- **Extensibility**
+  - To add a new language, simply add its key to `options` and define the corresponding labels for every item in `items` that requires a specific translation.
 
 ## Icons
 
@@ -100,7 +151,13 @@ type IconColors =
 
 type IconSize = "small" | "medium" | "large";
 
-type IconComponentProps = { color?: IconColors; size?: IconSize };
+/** If both are set, customSize wins (explicit > implicit). */
+type IconComponentProps = {
+  size?: IconSizePreset;
+  /** CSS length (px|em|rem|%, etc.). */
+  customSize?: string;
+  color?: IconColors;
+};
 ```
 
 ```tsx
